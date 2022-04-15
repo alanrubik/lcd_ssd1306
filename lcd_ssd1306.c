@@ -8,7 +8,7 @@
 
 #include "lcd_ssd1306.h"
 
-int lcd_Initialize(void) {
+void lcd_Initialize(void) {
     uint8_t data[SSD1306_NUM_INITIAL_CMDS];
     I2C1_MESSAGE_STATUS status;
     
@@ -32,6 +32,4 @@ int lcd_Initialize(void) {
     data[17] = SSD1306_SET_DISPLAY_ON;                  /* Display on */
     
     I2C1_MasterWrite(data,SSD1306_NUM_INITIAL_CMDS,SSD1306_ADDRESS,&status);
-
-    return 0;
 }

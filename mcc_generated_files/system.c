@@ -120,6 +120,7 @@
 #include "i2c1.h"
 #include "interrupt_manager.h"
 #include "traps.h"
+#include "../lcd_ssd1306.h"
 
 void SYSTEM_Initialize(void)
 {
@@ -127,6 +128,7 @@ void SYSTEM_Initialize(void)
     CLOCK_Initialize();
     INTERRUPT_Initialize();
     I2C1_Initialize();
+    lcd_Initialize();
 }
 
 /**

@@ -53,7 +53,7 @@
 #define SSD1306_VERTICAL_LEFT_SCROLL        0x2A /* Vertical and left scroll (Horizontal scroll by 1 column) */
 #define SSD1306_DUMMY_BYTE                  0x00 /* Dummy Byte */
 #define SSD1306_START_PAGE                  0x00 /* Initialize start page on page zero */
-#define SSD1306_SCROLL_STEP                 0x02 /* 010b ? 128 fvrames between each scroll */
+#define SSD1306_SCROLL_STEP                 0x02 /* 010b ? 128 frames between each scroll */
 #define SSD1306_END_PAGE                    0x07 /* Initialize end page on page seven */
 #define SSD1306_DUMMY_BYTE_FINAL            0xFF /* Final Dummy Byte */
 #define SSD1306_VERTICAL_SCROLL_OFFSET      0x01 /* 01h refer to offset = 1 row, No continuous vertical scrolling is available */
@@ -79,7 +79,7 @@
 #define SSD1306_SEGREMAP                    0xA0 /* 0xA0 column address 0 is mapped to SEG0 (RESET). 0xA1 column address 127 is mapped to SEG0 */
 #define SSD1306_SETMULTIPLEX                0xA8 /* See DataSheet RESET= 111111b */
 #define SSD1306_SETMULTIPLEX_VALUE          0x3F /* See DataSheet RESET= 111111b */
-#define SSD1306_COM_OUTPUT_SCAN_DIRECTION   0xC0 /* normal mode (RESET) Scan fromCOM0 to COM[N ?1]. remapped mode. Scan from COM[N-1] to COM0 Where N is the Multiplex ratio */
+#define SSD1306_COM_OUTPUT_SCAN_DIRECTION   0xC0 /* normal mode (RESET) Scan from COM0 to COM[N ?1]. remapped mode. Scan from COM[N-1] to COM0 Where N is the Multiplex ratio */
 #define SSD1306_SET_DISPLAY_OFFSET          0xD3 /* Mapping of the display star line to one of COM0~COM63 */
 #define SSD1306_SET_DISPLAY_OFFSET_VALUE    0x00 /* Value (RESET)COM0~COM63 */
 #define SSD1306_COM_PINS_HARDWARE_CONFIG    0xDA /* Set the pins of the Hardware */
@@ -97,8 +97,10 @@
 
 /* CHARGE PUMP COMMAND TABLE */
 #define SSD1306_CHARGE_PUMP_SETTING         0x8D /* Set the Charge pump */
-#define SSD1306_CHARGE_PUMP_VALUE           0x10 /* A[2]= 0b, Disable charge pump(RESET). A[2] = 1b, Enable charge pump during display on. The Charge Pump must be enabled by the following command: 8Dh : Charge Pump Setting - 14h : Enable Charge Pump - AFh: Display ON  */
+#define SSD1306_CHARGE_PUMP_VALUE           0x10 /* A[2]= 0b, Disable charge pump(RESET). A[2] = 1b, Enable charge pump during display on. The Charge Pump must be enabled by the following command: 8Dh : Charge Pump Setting - 14h : Enable Charge Pump - AFh: Display ON */
 
+/* Function prototypes */
+void lcd_Initialize(void);
 
 #endif	/* LCD_SSD1306_H */
 
