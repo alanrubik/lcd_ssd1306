@@ -35,15 +35,16 @@
 #include "mcc_generated_files/i2c1.h"
 
 #define SSD1306_ADDRESS                     0x3C
+#define SSD1306_NUM_INITIAL_CMDS            18
 
 /* FUNDAMENTAL COMMAND TABLE */
 #define SSD1306_SET_CONTRAST                0x81 /* Set contrast initialization */
 #define SSD1306_INIT_CONTRAST_VALUE         0xAA /* Contrast initial value */
-#define SSD1306_ENTIRE_DISPLAY_ON           0xA4 /* Resume to RAM content display (RESET) Output follows RAM content. 0xA5 Entire display ON, Output ignores RAM content */
+#define SSD1306_IGNORE_ENTIRE_DISPLAY_ON    0xA4 /* 0xA4 Resume to RAM content display (RESET) Output follows RAM content. 0xA5 Entire display ON, Output ignores RAM content */
 #define SSD1306_SET_NORMAL_DISPLAY          0xA6 /* 0 in RAM: OFF in display panel - 1 in RAM: ON in display panel (RESET) */
 #define SSD1306_SET_INVERSE_DISPLAY         0xA7 /* 0 in RAM: ON in display panel - 1 in RAM: OFF in display panel */
-#define SSD1306_SET_DISPLAY_ON              0xAE /* Display OFF (sleep mode) (RESET) */
-#define SSD1306_SET_DISPLAY_OFF             0xAF /* Display ON in normal mode */
+#define SSD1306_SET_DISPLAY_ON              0xAF /* Display OFF (sleep mode) (RESET) */
+#define SSD1306_SET_DISPLAY_OFF             0xAE /* Display ON in normal mode */
 
 /* SCROLLING COMMAND TABLE*/
 #define SSD1306_RIGHT_SCROLL                0x26 /* Right Horizontal Scroll 1 column */
