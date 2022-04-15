@@ -1,0 +1,37 @@
+# MPLAB X IDE (Netbeans) specific
+~*.*
+build/
+debug/
+dist/
+disassembly/
+.generated_files/
+nbproject/private/
+nbproject/*.bash
+nbproject/*.mk
+nbproject/Makefile-genesis.properties
+nbbuild/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+funclist
+
+# Object files
+*.d
+*.pre
+*.p1
+*.lst
+*.sym
+*.obj
+*.o
+*.sdb
+*.obj.dmp
+*.ko
+*.elf
+*.map
+
+# Executables
+*.exe
+
+# Misc
+.svn
+*.bak
