@@ -34,6 +34,7 @@
 #include "mcc_generated_files/system.h"
 #include "mcc_generated_files/i2c1.h"
 
+#define NUM_ATTEMPTS_ALLOWED                10
 #define SSD1306_ADDRESS                     0x3C
 #define SSD1306_NUM_INITIAL_CMDS            18
 

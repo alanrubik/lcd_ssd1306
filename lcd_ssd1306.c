@@ -8,10 +8,9 @@
 
 #include "lcd_ssd1306.h"
 
-void lcd_Initialize(void) {
+void lcd_Initialize( void) {
     uint8_t data[SSD1306_NUM_INITIAL_CMDS];
-    I2C1_MESSAGE_STATUS status;
-    
+ 
     data[0] = SSD1306_SETMULTIPLEX;                     /* Set MUX ratio */
     data[1] = SSD1306_SETMULTIPLEX_VALUE;               /* MUX ratio value */
     data[2] = SSD1306_SET_DISPLAY_OFFSET;               /* Set Display Offset */
@@ -31,5 +30,40 @@ void lcd_Initialize(void) {
     data[16] = SSD1306_CHARGE_PUMP_VALUE;               /* Set the pump value */
     data[17] = SSD1306_SET_DISPLAY_ON;                  /* Display on */
     
-    I2C1_MasterWrite(data,SSD1306_NUM_INITIAL_CMDS,SSD1306_ADDRESS,&status);
+    send_cmd_function(data, SSD1306_NUM_INITIAL_CMDS);
+}
+
+void send_cmd_function( uint8_t *data, uint8_t length)
+{    
+    I2C1_MESSAGE_STATUS status;
+    static uint8_t attempts = 0;
+    
+    I2C1_MasterWrite(data,length,SSD1306_ADDRESS,&status);
+    
+    switch(status)
+    {
+
+        case I2C1_MESSAGE_FAIL:
+            if(attempts < NUM_ATTEMPTS_ALLOWED)
+            {
+                attempts++;
+                send_cmd_function(data, length);
+            }
+            break;
+        case I2C1_MESSAGE_PENDING:
+            break;
+        case I2C1_MESSAGE_COMPLETE:
+            attempts = 0;
+            break;
+        case I2C1_STUCK_START:
+            break;
+        case I2C1_MESSAGE_ADDRESS_NO_ACK:
+            break;
+        case I2C1_DATA_NO_ACK:
+            break;
+        case I2C1_LOST_STATE:
+            break;
+        default:
+            break;
+    }
 }
