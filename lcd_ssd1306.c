@@ -33,3 +33,44 @@ void lcd_Initialize(void) {
     
     I2C1_MasterWrite(data,SSD1306_NUM_INITIAL_CMDS,SSD1306_ADDRESS,&status);
 }
+
+void lcd_Draw_Pixel(uint8_t x, uint8_t y){
+    
+    uint8_t data[8];
+    uint8_t current_column, pixel_byte;
+    I2C1_MESSAGE_STATUS status;
+    
+    /* coordinates validation */
+    if(x < 0 || x > 127)
+    {
+        return;
+    }
+    if(y < 0 || y > 63)
+    {
+        return;
+    }
+    
+    /* Set Addressing mode to Horizontal*/
+    data[0] = SSD1306_SET_MEMORY_ADDRESSING;
+    data[1] = SSD1306_ADDRESSING_HORIZONTAL;
+    
+    /* Set Column Address */
+    data[2] = SSD1306_SET_COLUMN_ADDRESS;
+    data[3] = x;
+    data[4] = x;
+    
+    /* Set Page Address */
+    data[5] = SSD1306_SET_PAGE_ADDRESS;
+    data[6] = y/8;
+    data[7] = y/8;
+    
+    I2C1_MasterWrite(data,8,SSD1306_ADDRESS,&status); /* Send Commands to LCD */
+    
+    I2C1_MasterRead(&current_column,1,SSD1306_ADDRESS,&status); /* Read of the current byte */
+    
+    /* pixel writing */
+    pixel_byte = 1 << (y%8); /* formula to obtain the posicion of the bit to be turned ON */
+    pixel_byte |= current_column; /* Added pixel to the current byte */
+    
+    I2C1_MasterWrite(&pixel_byte,1,SSD1306_ADDRESS,&status);
+}

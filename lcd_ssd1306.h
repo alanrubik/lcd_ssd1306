@@ -64,8 +64,8 @@
 /* ADDRESSING SETTING COMMAND TABLE*/
 #define SSD1306_SET_L_COLUMN_START_ADDRESS  0x00 /* Set the LOWER nibble of the column start address register for Page Addressing Mode using X[3:0] as data bits. The initial display line register is reset to 0000b after RESET. This command is only for page addressing mode */
 #define SSD1306_SET_H_COLUMN_START_ADDRESS  0x10 /* Set the HIGHER nibble of the column start address register for Page Addressing Mode using X[3:0] as data bits. The initial display line register is reset to 0000b after RESET. This command is only for page addressing mode */
-#define SSD1306_SET_MEMORY                  0x20 /* Set memory */
-#define SSD1306_ADDRESSING_MODE             0x00 /* Addressing mode: 00b Horizontal, 01b Vertical, 10b Page (reset), 11b invalid */
+#define SSD1306_SET_MEMORY_ADDRESSING       0x20 /* Set memory addressing mode*/
+#define SSD1306_ADDRESSING_HORIZONTAL       0x00 /* Addressing mode: 00b Horizontal, 01b Vertical, 10b Page (reset), 11b invalid */
 #define SSD1306_SET_COLUMN_ADDRESS          0x21 /* Setup column start and end address . This command is only for horizontal or vertical addressing mode */
 #define SSD1306_COLUMN_START_ADDRESS        0x00 /* Column START address, range : 0-127d, (RESET=0d). This command is only for horizontal or vertical addressing mode */
 #define SSD1306_COLUMN_END_ADDRESS          0x7F /* Column END address, range : 0-127d, (RESET=127d). This command is only for horizontal or vertical addressing mode */
@@ -101,6 +101,7 @@
 
 /* Function prototypes */
 void lcd_Initialize(void);
+void lcd_Draw_Pixel(uint8_t x, uint8_t y);
 
 #endif	/* LCD_SSD1306_H */
 
