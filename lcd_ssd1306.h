@@ -33,13 +33,15 @@
 
 #include "mcc_generated_files/system.h"
 #include "mcc_generated_files/i2c1.h"
+#include "general.h"
 
 #define SSD1306_ADDRESS                     0x3C
-#define SSD1306_NUM_INITIAL_CMDS            18
+#define SSD1306_NUM_INITIAL_CMDS            27
 
 /* FUNDAMENTAL COMMAND TABLE */
 #define SSD1306_SET_CONTRAST                0x81 /* Set contrast initialization */
-#define SSD1306_INIT_CONTRAST_VALUE         0xAA /* Contrast initial value */
+#define SSD1306_INIT_CONTRAST_VALUE         0xCF /* Contrast initial value */
+#define SSD1306_ENTIRE_DISPLAY_ON           0xA5
 #define SSD1306_IGNORE_ENTIRE_DISPLAY_ON    0xA4 /* 0xA4 Resume to RAM content display (RESET) Output follows RAM content. 0xA5 Entire display ON, Output ignores RAM content */
 #define SSD1306_SET_NORMAL_DISPLAY          0xA6 /* 0 in RAM: OFF in display panel - 1 in RAM: ON in display panel (RESET) */
 #define SSD1306_SET_INVERSE_DISPLAY         0xA7 /* 0 in RAM: ON in display panel - 1 in RAM: OFF in display panel */
@@ -90,18 +92,19 @@
 #define SSD1306_SET_DISPLAY_CLOCK           0xD5 /* Set the clock of the display */
 #define SSD1306_DISPLAY_CLK_DIVIDE_RATIO    0x80 /* Divide ratio of the Display clock in first nible A[3:0]+1,(reset 0000=1). Oscilator Frequency A[7:4] min 0000b~1111b max */
 #define SSD1306_SET_PRE_CHARGED_PERIOD      0xD9 /* Set the pre-charged period */
-#define SSD1306_PRE_CHARGED_PHASE           0x22 /* A[3:0] = Phase 1 period of up to 15 DCLK clocks 0 is invalid entry (RESET=2h). A[7:4] = Phase 2 period of up to 15 DCLK clocks 0 is invalid entry (RESET=2h )  */          
+#define SSD1306_PRE_CHARGED_PHASE           0xF1 /* A[3:0] = Phase 1 period of up to 15 DCLK clocks 0 is invalid entry (RESET=2h). A[7:4] = Phase 2 period of up to 15 DCLK clocks 0 is invalid entry (RESET=2h )  */          
 #define SSD1306_SET_VCOMH_DESELECT          0xDB /* Set the Vcomh */
-#define SSD1306_SET_VCOMH_DESELECT_LEVEL    0x20 /* Vcomh Level */
+#define SSD1306_SET_VCOMH_DESELECT_LEVEL    0x40 /* Vcomh Level */
 #define SSD1306_NOP                         0xE3 /* Command for no operation */
 
 /* CHARGE PUMP COMMAND TABLE */
 #define SSD1306_CHARGE_PUMP_SETTING         0x8D /* Set the Charge pump */
-#define SSD1306_CHARGE_PUMP_VALUE           0x10 /* A[2]= 0b, Disable charge pump(RESET). A[2] = 1b, Enable charge pump during display on. The Charge Pump must be enabled by the following command: 8Dh : Charge Pump Setting - 14h : Enable Charge Pump - AFh: Display ON */
+#define SSD1306_CHARGE_PUMP_VALUE           0x14 /* A[2]= 0b, Disable charge pump(RESET). A[2] = 1b, Enable charge pump during display on. The Charge Pump must be enabled by the following command: 8Dh : Charge Pump Setting - 14h : Enable Charge Pump - AFh: Display ON */
 
 /* Function prototypes */
 void lcd_Initialize(void);
 void lcd_Draw_Pixel(uint8_t x, uint8_t y);
+void check_lcd_I2C_status(I2C1_MESSAGE_STATUS *status);
 
 #endif	/* LCD_SSD1306_H */
 
