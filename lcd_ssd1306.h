@@ -33,13 +33,15 @@
 
 #include "mcc_generated_files/system.h"
 #include "mcc_generated_files/i2c1.h"
+#include "general.h"
 
 #define SSD1306_ADDRESS                     0x3C
-#define SSD1306_NUM_INITIAL_CMDS            18
+#define SSD1306_NUM_INITIAL_CMDS            27
 
 /* FUNDAMENTAL COMMAND TABLE */
 #define SSD1306_SET_CONTRAST                0x81 /* Set contrast initialization */
-#define SSD1306_INIT_CONTRAST_VALUE         0xAA /* Contrast initial value */
+#define SSD1306_INIT_CONTRAST_VALUE         0xCF /* Contrast initial value */
+#define SSD1306_ENTIRE_DISPLAY_ON           0xA5
 #define SSD1306_IGNORE_ENTIRE_DISPLAY_ON    0xA4 /* 0xA4 Resume to RAM content display (RESET) Output follows RAM content. 0xA5 Entire display ON, Output ignores RAM content */
 #define SSD1306_SET_NORMAL_DISPLAY          0xA6 /* 0 in RAM: OFF in display panel - 1 in RAM: ON in display panel (RESET) */
 #define SSD1306_SET_INVERSE_DISPLAY         0xA7 /* 0 in RAM: ON in display panel - 1 in RAM: OFF in display panel */
@@ -64,8 +66,8 @@
 /* ADDRESSING SETTING COMMAND TABLE*/
 #define SSD1306_SET_L_COLUMN_START_ADDRESS  0x00 /* Set the LOWER nibble of the column start address register for Page Addressing Mode using X[3:0] as data bits. The initial display line register is reset to 0000b after RESET. This command is only for page addressing mode */
 #define SSD1306_SET_H_COLUMN_START_ADDRESS  0x10 /* Set the HIGHER nibble of the column start address register for Page Addressing Mode using X[3:0] as data bits. The initial display line register is reset to 0000b after RESET. This command is only for page addressing mode */
-#define SSD1306_SET_MEMORY                  0x20 /* Set memory */
-#define SSD1306_ADDRESSING_MODE             0x00 /* Addressing mode: 00b Horizontal, 01b Vertical, 10b Page (reset), 11b invalid */
+#define SSD1306_SET_MEMORY_ADDRESSING       0x20 /* Set memory addressing mode*/
+#define SSD1306_ADDRESSING_HORIZONTAL       0x00 /* Addressing mode: 00b Horizontal, 01b Vertical, 10b Page (reset), 11b invalid */
 #define SSD1306_SET_COLUMN_ADDRESS          0x21 /* Setup column start and end address . This command is only for horizontal or vertical addressing mode */
 #define SSD1306_COLUMN_START_ADDRESS        0x00 /* Column START address, range : 0-127d, (RESET=0d). This command is only for horizontal or vertical addressing mode */
 #define SSD1306_COLUMN_END_ADDRESS          0x7F /* Column END address, range : 0-127d, (RESET=127d). This command is only for horizontal or vertical addressing mode */
@@ -90,17 +92,19 @@
 #define SSD1306_SET_DISPLAY_CLOCK           0xD5 /* Set the clock of the display */
 #define SSD1306_DISPLAY_CLK_DIVIDE_RATIO    0x80 /* Divide ratio of the Display clock in first nible A[3:0]+1,(reset 0000=1). Oscilator Frequency A[7:4] min 0000b~1111b max */
 #define SSD1306_SET_PRE_CHARGED_PERIOD      0xD9 /* Set the pre-charged period */
-#define SSD1306_PRE_CHARGED_PHASE           0x22 /* A[3:0] = Phase 1 period of up to 15 DCLK clocks 0 is invalid entry (RESET=2h). A[7:4] = Phase 2 period of up to 15 DCLK clocks 0 is invalid entry (RESET=2h )  */          
+#define SSD1306_PRE_CHARGED_PHASE           0xF1 /* A[3:0] = Phase 1 period of up to 15 DCLK clocks 0 is invalid entry (RESET=2h). A[7:4] = Phase 2 period of up to 15 DCLK clocks 0 is invalid entry (RESET=2h )  */          
 #define SSD1306_SET_VCOMH_DESELECT          0xDB /* Set the Vcomh */
-#define SSD1306_SET_VCOMH_DESELECT_LEVEL    0x20 /* Vcomh Level */
+#define SSD1306_SET_VCOMH_DESELECT_LEVEL    0x40 /* Vcomh Level */
 #define SSD1306_NOP                         0xE3 /* Command for no operation */
 
 /* CHARGE PUMP COMMAND TABLE */
 #define SSD1306_CHARGE_PUMP_SETTING         0x8D /* Set the Charge pump */
-#define SSD1306_CHARGE_PUMP_VALUE           0x10 /* A[2]= 0b, Disable charge pump(RESET). A[2] = 1b, Enable charge pump during display on. The Charge Pump must be enabled by the following command: 8Dh : Charge Pump Setting - 14h : Enable Charge Pump - AFh: Display ON */
+#define SSD1306_CHARGE_PUMP_VALUE           0x14 /* A[2]= 0b, Disable charge pump(RESET). A[2] = 1b, Enable charge pump during display on. The Charge Pump must be enabled by the following command: 8Dh : Charge Pump Setting - 14h : Enable Charge Pump - AFh: Display ON */
 
 /* Function prototypes */
 void lcd_Initialize(void);
+void lcd_Draw_Pixel(uint8_t x, uint8_t y);
+void check_lcd_I2C_status(I2C1_MESSAGE_STATUS *status);
 
 #endif	/* LCD_SSD1306_H */
 
