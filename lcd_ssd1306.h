@@ -106,6 +106,8 @@
 void lcd_Initialize(void);
 void lcd_Draw_Pixel(uint8_t x, uint8_t y);
 void check_lcd_I2C_status(I2C1_MESSAGE_STATUS *status);
-
+void showDisplay( void);
+void send_i2c_lcd_cmd(  uint8_t *pdata,
+                        uint8_t length);
 #endif	/* LCD_SSD1306_H */
 
