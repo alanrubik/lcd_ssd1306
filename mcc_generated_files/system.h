@@ -48,6 +48,7 @@
 
 #include "xc.h"
 #include "stdint.h"
+#include <stdbool.h>
 
 #ifndef SYSTEM_H
 #define	SYSTEM_H

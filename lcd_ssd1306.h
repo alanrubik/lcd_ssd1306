@@ -33,10 +33,11 @@
 
 #include "mcc_generated_files/system.h"
 #include "mcc_generated_files/i2c1.h"
-#include "general.h"
 
 #define SSD1306_ADDRESS                     0x3C
 #define SSD1306_NUM_INITIAL_CMDS            27
+#define DISPLAY_HEIGHT                      64
+#define DISPLAY_WIDTH                       128
 
 /* FUNDAMENTAL COMMAND TABLE */
 #define SSD1306_SET_CONTRAST                0x81 /* Set contrast initialization */
