@@ -33,10 +33,11 @@
 
 #include "mcc_generated_files/system.h"
 #include "mcc_generated_files/i2c1.h"
-#include "general.h"
 
 #define SSD1306_ADDRESS                     0x3C
 #define SSD1306_NUM_INITIAL_CMDS            27
+#define DISPLAY_HEIGHT                      64
+#define DISPLAY_WIDTH                       128
 
 /* FUNDAMENTAL COMMAND TABLE */
 #define SSD1306_SET_CONTRAST                0x81 /* Set contrast initialization */
@@ -86,7 +87,6 @@
 #define SSD1306_SET_DISPLAY_OFFSET_VALUE    0x00 /* Value (RESET)COM0~COM63 */
 #define SSD1306_COM_PINS_HARDWARE_CONFIG    0xDA /* Set the pins of the Hardware */
 #define SSD1306_SEQ_COM_PIN_CONFIGURATION   0x12 /* Select sequential/alternative(Reset) COM pin configuration, (Reset)Disable/Enable COM left right Remap */
-
 
 /* Timing & Driving Scheme Setting Command Table*/
 #define SSD1306_SET_DISPLAY_CLOCK           0xD5 /* Set the clock of the display */

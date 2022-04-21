@@ -48,6 +48,8 @@
 
 #include "xc.h"
 #include "stdint.h"
+#include <string.h>
+#include <stdbool.h>
 
 #ifndef SYSTEM_H
 #define	SYSTEM_H

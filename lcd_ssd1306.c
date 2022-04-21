@@ -8,10 +8,11 @@
 
 #include "lcd_ssd1306.h"
 
+uint8_t buffer[DISPLAY_HEIGHT][DISPLAY_WIDTH];
+
 void lcd_Initialize(void) {
     uint8_t data[SSD1306_NUM_INITIAL_CMDS];
     I2C1_MESSAGE_STATUS status = -1;
-    bool completed = false;
     
     data[0] = 0x00;
     data[1] = SSD1306_SET_DISPLAY_OFF;
@@ -41,7 +42,6 @@ void lcd_Initialize(void) {
     data[25] = SSD1306_DEACTIVATE_SCROLL;               /* Deactivate scroll */
     data[26] = SSD1306_SET_DISPLAY_ON;                  /* Display on */
     
-    debug_LCD("[LCD] Send Initialize\n", LOG_INFORMATION);
     I2C1_MasterWrite(data,SSD1306_NUM_INITIAL_CMDS,SSD1306_ADDRESS,&status);
     check_lcd_I2C_status(&status);
 }
@@ -74,11 +74,9 @@ void lcd_Draw_Pixel(uint8_t x, uint8_t y){
     data[5] = y/8;
     data[6] = y/8;
     
-    debug_LCD("[LCD] Send Draw Pixel Commands\n", LOG_INFORMATION);
     I2C1_MasterWrite(data,7,SSD1306_ADDRESS,&status); /* Send Commands to LCD */
     check_lcd_I2C_status(&status);
     
-    debug_LCD("[LCD] Read Current Column Byte\n", LOG_INFORMATION);
     I2C1_MasterRead(&current_column,1,SSD1306_ADDRESS,&status); /* Read of the current byte */
     check_lcd_I2C_status(&status);
     
@@ -86,9 +84,13 @@ void lcd_Draw_Pixel(uint8_t x, uint8_t y){
     pixel_byte = 1 << (y%8); /* formula to obtain the posicion of the bit to be turned ON */
     pixel_byte |= current_column; /* Added pixel to the current byte */
     
-    debug_LCD("[LCD] Write Pixel\n", LOG_INFORMATION);
     I2C1_MasterWrite(&pixel_byte,1,SSD1306_ADDRESS,&status);
     check_lcd_I2C_status(&status);
+}
+
+void clear_Display(void)
+{
+    memset(buffer, 0, sizeof buffer);   
 }
 
 void check_lcd_I2C_status(I2C1_MESSAGE_STATUS *status)
@@ -99,37 +101,30 @@ void check_lcd_I2C_status(I2C1_MESSAGE_STATUS *status)
     {
         switch(*status)
         {
-            case I2C2_MESSAGE_FAIL:
-                debug_LCD("I2C1_MESSAGE_FAIL\n",LOG_ERROR);
+            case I2C1_MESSAGE_FAIL:
                 completed = true;
                 break;
 
-            case I2C2_MESSAGE_PENDING:
-                debug_LCD("I2C1_MESSAGE_PENDING\n",LOG_DEBUG);
+            case I2C1_MESSAGE_PENDING:
                 break;
 
-            case I2C2_MESSAGE_COMPLETE:
-                debug_LCD("I2C1_MESSAGE_COMPLETE\n",LOG_DEBUG);
+            case I2C1_MESSAGE_COMPLETE:
                 completed = true;
                 break;
 
-            case I2C2_STUCK_START:
-                debug_LCD("I2C1_STUCK_START\n",LOG_DEBUG);
+            case I2C1_STUCK_START:
                 completed = true;
                 break;
 
-            case I2C2_MESSAGE_ADDRESS_NO_ACK:
-                debug_LCD("I2C1_MESSAGE_ADDRESS_NO_ACK\n",LOG_DEBUG);
+            case I2C1_MESSAGE_ADDRESS_NO_ACK:
                 completed = true;
                 break;
 
-            case I2C2_DATA_NO_ACK:
-                debug_LCD("I2C1_DATA_NO_ACK\n",LOG_ERROR);
+            case I2C1_DATA_NO_ACK:
                 completed = true;
                 break;
 
-            case I2C2_LOST_STATE:
-                debug_LCD("I2C1_LOST_STATE\n",LOG_DEBUG);
+            case I2C1_LOST_STATE:
                 completed = true;
                 break;    
         }
