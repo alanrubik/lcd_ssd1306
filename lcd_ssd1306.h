@@ -34,10 +34,16 @@
 #include "mcc_generated_files/system.h"
 #include "mcc_generated_files/i2c1.h"
 
-#define SSD1306_ADDRESS                     0x3C
+#define SSD1306_ADDRESS                     0x3D
+#define SSD1306_CTRLBYTE_DATA               0x40
+#define SSD1306_CTRLBYTE_COMMAND            0x00
 #define SSD1306_NUM_INITIAL_CMDS            27
 #define DISPLAY_HEIGHT                      64
 #define DISPLAY_WIDTH                       128
+#define WHITE_PIXEL                         1
+#define BLACK_PIXEL                         0
+#define WHITE_PAGE                          0x00
+#define BLACK_PAGE                          0xFF
 
 /* FUNDAMENTAL COMMAND TABLE */
 #define SSD1306_SET_CONTRAST                0x81 /* Set contrast initialization */
@@ -103,8 +109,13 @@
 
 /* Function prototypes */
 void lcd_Initialize(void);
-void lcd_Draw_Pixel(uint8_t x, uint8_t y);
+void lcd_Draw_Pixel(uint8_t x, uint8_t y, uint8_t pixel_color);
 void check_lcd_I2C_status(I2C1_MESSAGE_STATUS *status);
+uint8_t lcd_Read_Pixel(uint8_t x, uint8_t y);
+void lcd_Draw_Horizontal_Line(uint8_t x, uint8_t y, uint8_t lenght, uint8_t pixel_color);
+void lcd_Draw_Vertical_Line(uint8_t x, uint8_t y, uint8_t lenght, uint8_t pixel_color);
+void show_Display(void);
+
 
 #endif	/* LCD_SSD1306_H */
 

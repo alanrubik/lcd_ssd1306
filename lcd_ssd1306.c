@@ -8,14 +8,14 @@
 
 #include "lcd_ssd1306.h"
 
-uint8_t buffer[DISPLAY_HEIGHT][DISPLAY_WIDTH];
+uint8_t buffer[DISPLAY_WIDTH][DISPLAY_HEIGHT];
 
 void lcd_Initialize(void) {
     uint8_t data[SSD1306_NUM_INITIAL_CMDS];
     I2C1_MESSAGE_STATUS status = -1;
     
-    data[0] = 0x00;
-    data[1] = SSD1306_SET_DISPLAY_OFF;
+    data[0] = SSD1306_CTRLBYTE_COMMAND;                 /* Will give Commands */
+    data[1] = SSD1306_SET_DISPLAY_OFF;                  /* Set Disp off */
     data[2] = SSD1306_SET_DISPLAY_CLOCK;                /* Set Osc Frequency */
     data[3] = SSD1306_DISPLAY_CLK_DIVIDE_RATIO;         /* Divide ratio = 1. Oscilator freq = 8 */
     data[4] = SSD1306_SETMULTIPLEX;                     /* Set MUX ratio */
@@ -46,51 +46,83 @@ void lcd_Initialize(void) {
     check_lcd_I2C_status(&status);
 }
 
-void lcd_Draw_Pixel(uint8_t x, uint8_t y){
-    
-    uint8_t data[7];
-    uint8_t current_column, pixel_byte;
-    I2C1_MESSAGE_STATUS status;
-    
-    /* coordinates validation */
-    if(x < 0 || x > 127)
-    {
+void lcd_Draw_Pixel(uint8_t x, uint8_t y, uint8_t pixel_color)
+{
+    if((x > DISPLAY_WIDTH-1) || (x < 0) || (y > DISPLAY_HEIGHT-1) || (y < 0))
         return;
-    }
-    if(y < 0 || y > 63)
-    {
-        return;
-    }
-    
-    data[0] = 0x00;
-    
-    /* Set Column Address */
-    data[1] = SSD1306_SET_COLUMN_ADDRESS;
-    data[2] = x;
-    data[3] = x;
-    
-    /* Set Page Address */
-    data[4] = SSD1306_SET_PAGE_ADDRESS;
-    data[5] = y/8;
-    data[6] = y/8;
-    
-    I2C1_MasterWrite(data,7,SSD1306_ADDRESS,&status); /* Send Commands to LCD */
-    check_lcd_I2C_status(&status);
-    
-    I2C1_MasterRead(&current_column,1,SSD1306_ADDRESS,&status); /* Read of the current byte */
-    check_lcd_I2C_status(&status);
-    
-    /* pixel writing */
-    pixel_byte = 1 << (y%8); /* formula to obtain the posicion of the bit to be turned ON */
-    pixel_byte |= current_column; /* Added pixel to the current byte */
-    
-    I2C1_MasterWrite(&pixel_byte,1,SSD1306_ADDRESS,&status);
-    check_lcd_I2C_status(&status);
+    buffer[x][y] = pixel_color;
+}
+
+uint8_t lcd_Read_Pixel(uint8_t x, uint8_t y)
+{
+    if((x > DISPLAY_WIDTH-1) || (x < 0) || (y > DISPLAY_HEIGHT-1) || (y < 0))
+        return 0;
+    return buffer[x][y];
 }
 
 void clear_Display(void)
 {
     memset(buffer, 0, sizeof buffer);   
+}
+
+void lcd_Draw_Vertical_Line(uint8_t x, uint8_t y, uint8_t lenght, uint8_t pixel_color)
+{
+    int i;
+    if((x > DISPLAY_WIDTH-1) || (x < 0) || (y > DISPLAY_HEIGHT-1) || (y < 0) || (lenght < 0))
+        return ;
+    for(i=y; i<=lenght && i<DISPLAY_HEIGHT; i++)
+    {
+        buffer[x][i] = pixel_color;
+    }
+}
+
+void lcd_Draw_Horizontal_Line(uint8_t x, uint8_t y, uint8_t lenght, uint8_t pixel_color)
+{
+    int i;
+    if((x > DISPLAY_WIDTH-1) || (x < 0) || (y > DISPLAY_HEIGHT-1) || (y < 0) || (lenght < 0))
+        return;
+    for(i=x; i<=lenght && i<DISPLAY_WIDTH; i++)
+    {
+        buffer[i][y] = pixel_color;
+    }
+}
+
+void show_Display(void)
+{
+    uint8_t i,j,ram_byte=0, page, ctrl_data=SSD1306_CTRLBYTE_DATA;  
+    uint8_t data[7];
+    I2C1_MESSAGE_STATUS status = -1;
+    
+    data[0] = SSD1306_CTRLBYTE_COMMAND;     /* Ready to set the start and end column address */    
+    data[1] = SSD1306_SET_COLUMN_ADDRESS;     /* Ready to set the start and end column address */
+    data[2] = SSD1306_COLUMN_START_ADDRESS;   /* Start address on column 0 */
+    data[3] = SSD1306_COLUMN_END_ADDRESS;     /* End address on column 127 */
+    data[4] = SSD1306_SET_PAGE_ADDRESS;       /* Ready to set the start and end page address */
+    data[5] = SSD1306_PAGE_START;             /* Start address on page 0 */
+    data[6] = SSD1306_PAGE_END;               /* End address on page 7 */    
+    
+    I2C1_MasterWrite(data,7,SSD1306_ADDRESS,&status);
+    check_lcd_I2C_status(&status);
+
+    I2C1_MasterWrite(&ctrl_data,1,SSD1306_ADDRESS,&status);
+    check_lcd_I2C_status(&status);  
+    
+    for(page=0; page<8; page++)
+    {
+        for(i=0; i<DISPLAY_WIDTH; i++)
+        {
+            ram_byte = 0;
+            for(j=0; j<8; j++)
+            {
+                if(buffer[i][j] == 1)
+                    ram_byte = ram_byte | (1 << j);
+                else
+                    ram_byte = ram_byte & ~(1 << j);
+            }
+            I2C1_MasterWrite(&ram_byte,1,SSD1306_ADDRESS,&status);
+            check_lcd_I2C_status(&status);
+        }
+    } 
 }
 
 void check_lcd_I2C_status(I2C1_MESSAGE_STATUS *status)
